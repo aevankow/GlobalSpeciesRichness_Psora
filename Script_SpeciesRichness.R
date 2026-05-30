@@ -292,5 +292,56 @@ ggplot() +
   # Use a log scale because richness is highly skewed
   scale_fill_viridis_c(trans = "log10")
 
+plain <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank(),
+  panel.background = element_rect(fill = "gray90"),
+  plot.title = element_text(hjust = 0.5)
+)
+
+#plot data from 2024 using a scale of yellow to red
+ggplot() +
+  geom_sf(data = world_map, colour = "black", fill = "white") +
+  geom_sf(
+    data = poly_shp_sf_w,
+    aes(fill = richness)
+  ) + plain +
+  scale_fill_gradient(low = "yellow", high = "red") 
+# Use a log scale because richness is highly skewed
+#scale_fill_viridis_c() +
+# scale_fill_viridis_c(trans = "log10") +
+#coord_sf(crs="+proj=moll +datum=WGS84 +units=m")
+
+# Set the CRS to match between the background map and points from 2026
+poly_shp_sf_2026 <- st_as_sf(comm2026$map)
+st_crs(poly_shp_sf_2026) <- st_crs(world_map)
+
+#plot data from 2026 using the viridis color scale
+ggplot() +
+  geom_sf(data = world_map) +
+  geom_sf(
+    data = poly_shp_sf_2026,
+    aes(fill = richness)
+  ) +
+  # Use a log scale because richness is highly skewed
+  scale_fill_viridis_c(trans = "log10")
+
+#plot data from 2026 using a scale of yellow to red
+ggplot() +
+  geom_sf(data = world_map, colour = "black", fill = "white") +
+  geom_sf(
+    data = poly_shp_sf_2026,
+    aes(fill = richness)
+  ) + plain +
+  scale_fill_gradient(low = "yellow", high = "red") 
+# Use a log scale because richness is highly skewed
+#scale_fill_viridis_c() +
+# scale_fill_viridis_c(trans = "log10") +
+#coord_sf(crs="+proj=moll +datum=WGS84 +units=m")
+
 
 
