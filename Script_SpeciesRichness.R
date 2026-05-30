@@ -278,5 +278,19 @@ redundancy_res_2_2026 <-
 ggplot(redundancy_res_2_2026, aes(x = redundancy)) +
   geom_histogram()
 
+# Set the CRS to match between the background map and points
+poly_shp_sf_w <- st_as_sf(commW$map)
+st_crs(poly_shp_sf_w) <- st_crs(world_map)
+
+#plot data from 2024 using the viridis color scale
+ggplot() +
+  geom_sf(data = world_map) +
+  geom_sf(
+    data = poly_shp_sf_w,
+    aes(fill = richness)
+  ) +
+  # Use a log scale because richness is highly skewed
+  scale_fill_viridis_c(trans = "log10")
+
 
 
