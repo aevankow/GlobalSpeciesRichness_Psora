@@ -1,5 +1,6 @@
 
-#These maps were created using the tutorial by @joelnitta "Obtaining occurrence and phylogeny data in R"
+#These maps were created using the tutorial by @joelnitta 
+"Obtaining occurrence and phylogeny data in R"
 #https://github.com/joelnitta/spatial-phy-workshop/blob/main/tutorials/occ_phy.md
  
 #Please see this tutorial for setup and other detailed information
@@ -7,13 +8,14 @@
 library(rgbif)
 library(tidyverse)
 
+#Step one download the occurrence data
 #genus_ID for Psora on GBIF is 5953400. You can redo these maps with other taxa by changing the taxon id.
 taxon_id <- 5953400
 
 #I initially completed this download 2024-12-02 from GBIF using rgbif
 occ_download_prep(pred_in("taxonKey", taxon_id), pred("hasCoordinate", TRUE))
 
-#I am going to redo the download and see what has changed
+#I am will redo the download and see what has changed
 occ_download(pred_in("taxonKey", taxon_id), pred("hasCoordinate", TRUE))
 
 #This is my new download for 2026-05-30
@@ -65,14 +67,15 @@ occ_download(pred_in("taxonKey", taxon_id), pred("hasCoordinate", TRUE))
 # Citation:
 #   GBIF Occurrence Download https://doi.org/10.15468/dl.6zrq67 Accessed from R via rgbif (https://github.com/ropensci/rgbif) on 2024-12-02
 
-#import older download
+#import older download into R
 psora_records_world <- occ_download_get('0011647-241126133413365') %>%
   occ_download_import()
 
-#import new download
+#import new download into R
 psora_records_world_2026 <- occ_download_get('0025991-260519110011954') %>%
   occ_download_import()
 
+#look at the data using glimpse and count
 library(dplyr)
 glimpse(psora_records_world[1, ])
 #Rows: 1, Columns: 223
@@ -151,7 +154,7 @@ psora_records_world_2026 %>%
 
 #The number of species from human observations increased by 1. The number of species from preserved specimens increased by 4. 
 
-#How many species are only represented by HUMAN_OBSERVATION records? In other words, if we were to drop all HUMAN_OBSERVATION records, how many species would we lose?
+#How many species are represented by each basis of record?
 psora_records_world %>%
   group_by(species) %>%
   add_count(basisOfRecord) %>%
@@ -180,14 +183,15 @@ psora_records_world_2026 %>%
 # 2 Psora subfumosa     1
 # 3 Psora taurensis     1
 
-#These results are confusing to me. I will need to follow up with them.
+#These results are confusing to me. I will need to follow up with them. 
+#(I know specimens exsist for Psora taurensis and Psora pruinosa, as least.)
 
 # Download world map data
 library(rnaturalearth)
 
 world_map <- ne_countries(returnclass = "sf")
 
-#map of points from 2024
+#raw map of points from 2024
 ggplot()+
   geom_sf(data = world_map) +
   geom_point(
@@ -196,7 +200,7 @@ ggplot()+
     size = 0.5) +
   theme(legend.position = "none")
 
-#map of points from 2026
+#raw map of points from 2026
 ggplot()+
   geom_sf(data = world_map) +
   geom_point(
@@ -205,7 +209,8 @@ ggplot()+
     size = 0.5) +
   theme(legend.position = "none")
 
-#I do not see any obvious differences between these two maps, except that there are more points on the newer map.
+#I do not see any obvious differences between these two maps, 
+#except that there are more points on the newer map.
 
 #Did you notice the warning message when we ran ggplot(). No, but we will clean the data anyway.
 psora_records_world_no_missing <-
@@ -238,6 +243,7 @@ psora_records_world_no_missing_2026
 library(phyloregion)
 library(sf)
 
+#"Agregating points to grid-cells"
 #Convert raw input distribution data to community ?points2comm
 commW <-
   points2comm(
@@ -349,6 +355,26 @@ ggplot() +
 #scale_fill_viridis_c() +
 # scale_fill_viridis_c(trans = "log10") +
 #coord_sf(crs="+proj=moll +datum=WGS84 +units=m")
+
+#plot abundance data from 2024 using a scale of yellow to red
+ggplot() +
+  geom_sf(data = world_map, colour = "black", fill = "white") +
+  geom_sf(
+    data = poly_shp_sf_w,
+    aes(fill = abundance)
+  ) + plain +
+  scale_fill_gradient(low = "yellow", high = "red")
+
+#plot abundance data from 2026 using a scale of yellow to red
+ggplot() +
+  geom_sf(data = world_map, colour = "black", fill = "white") +
+  geom_sf(
+    data = poly_shp_sf_2026,
+    aes(fill = abundance)
+  ) + plain +
+  scale_fill_gradient(low = "yellow", high = "red") 
+
+#That's all for now.
 
 
 
