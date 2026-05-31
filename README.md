@@ -23,4 +23,6 @@ We then used points2comm from the package [phyloregion](https://phyloregion.com/
 The initial [GBIF Occurrence Download](https://doi.org/10.15468/dl.6zrq67) was accessed on 02 December 2024. 
 
 I decided to redo these analyses with a new [GBIF Occurrence Download](https://doi.org/10.15468/dl.8m2kxm) from 30 May 2026.
+![Species Richness](Plots/Rplot_speciesrichness_2026.png)
+
 
