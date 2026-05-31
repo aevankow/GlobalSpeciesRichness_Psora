@@ -7,10 +7,10 @@
 library(rgbif)
 library(tidyverse)
 
-#genus_ID for Psora is 5953400
+#genus_ID for Psora on GBIF is 5953400. You can redo these maps with other taxa by changing the taxon id.
 taxon_id <- 5953400
 
-#I initially completed this download 2024-12-02
+#I initially completed this download 2024-12-02 from GBIF using rgbif
 occ_download_prep(pred_in("taxonKey", taxon_id), pred("hasCoordinate", TRUE))
 
 #I am going to redo the download and see what has changed
@@ -109,6 +109,10 @@ psora_records_world_2026 %>%
 # 7 OCCURRENCE             69
 # 8 PRESERVED_SPECIMEN  11122
 
+#The number of Human observations increased by more than 2000 in less than 2 years.
+#The number of digitized preserved specimens increased by more than 1500 as well.
+#There are also more machine observations and material samples.
+
 psora_records_world %>%
   group_by(basisOfRecord) %>%
   summarize(
@@ -145,6 +149,8 @@ psora_records_world_2026 %>%
 # 7 OCCURRENCE              6
 # 8 PRESERVED_SPECIMEN     37
 
+#The number of species from human observations increased by 1. The number of species from preserved specimens increased by 4. 
+
 #How many species are only represented by HUMAN_OBSERVATION records? In other words, if we were to drop all HUMAN_OBSERVATION records, how many species would we lose?
 psora_records_world %>%
   group_by(species) %>%
@@ -160,7 +166,6 @@ psora_records_world %>%
 # 2 Psora subfumosa       1
 # 3 Psora taurensis       1
 
-#How many species are only represented by HUMAN_OBSERVATION records? In other words, if we were to drop all HUMAN_OBSERVATION records, how many species would we lose?
 psora_records_world_2026 %>%
   group_by(species) %>%
   add_count(basisOfRecord) %>%
@@ -174,6 +179,8 @@ psora_records_world_2026 %>%
 #   1 Psora pruinosa      1
 # 2 Psora subfumosa     1
 # 3 Psora taurensis     1
+
+#These results are confusing to me. I will need to follow up with them.
 
 # Download world map data
 library(rnaturalearth)
@@ -198,9 +205,9 @@ ggplot()+
     size = 0.5) +
   theme(legend.position = "none")
 
-#I do not see any obvious differences between these two maps.
+#I do not see any obvious differences between these two maps, except that there are more points on the newer map.
 
-#Did you notice the warning message when we ran ggplot()? It said 10493 rows containing missing values had been removed rom the plot. Clearly we can’t use data that lack GPS points! The first step of cleaning the data is to remove these values.
+#Did you notice the warning message when we ran ggplot(). No, but we will clean the data anyway.
 psora_records_world_no_missing <-
   psora_records_world %>%
   # Also remove data that are missing species names
@@ -268,13 +275,13 @@ comm2026 <-
     res = 2
   )
 
-#Calculating redundancy is straightforward with the output from points2comm().
+#Calculating redundancy for 2026.
 redundancy_res_2_2026 <-
   comm2026$map %>%
   as_tibble() %>%
   mutate(redundancy = 1 - richness/abundance)
 
-#We could then plot a histogram or bar chart to take a closer look:
+#We then polot the histogram for 2026.
 ggplot(redundancy_res_2_2026, aes(x = redundancy)) +
   geom_histogram()
 
@@ -282,7 +289,7 @@ ggplot(redundancy_res_2_2026, aes(x = redundancy)) +
 poly_shp_sf_w <- st_as_sf(commW$map)
 st_crs(poly_shp_sf_w) <- st_crs(world_map)
 
-#plot data from 2024 using the viridis color scale
+#plot data from 2024 using the viridis color scale (as shown in the tutorial).
 ggplot() +
   geom_sf(data = world_map) +
   geom_sf(
