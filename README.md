@@ -19,3 +19,8 @@ We then used points2comm from the package [phyloregion](https://phyloregion.com/
 2023), and plotted using [gglot2](https://ggplot2.tidyverse.org/) (Wickham et al. 2020) using a map from [rnaturalearth](https://github.com/ropensci/rnaturalearth)
 (Massicotte & South 2024) to produce (the) Fig(ure)."
 
+## Data comparison between 2024 and 2026
+The initial [GBIF Occurrence Download](https://doi.org/10.15468/dl.6zrq67) was accessed on 02 December 2024. 
+
+I decided to redo these analyses with a new [GBIF Occurrence Download](https://doi.org/10.15468/dl.8m2kxm) from 30 May 2026.
+
